@@ -39,8 +39,8 @@ public interface ContextCalculator<T extends Contextual> {
      * 
      *
      * @param calculable {@link Contextual} for this operation
-     * @param accumulator {@link Set} of {@link Context}s this operation
-     *     will append to.
+     * @param accumulator {@link Set} of {@link Context}s this operation will
+     *        append to.
      */
     void accumulateContexts(T calculable, Set<Context> accumulator);
 
