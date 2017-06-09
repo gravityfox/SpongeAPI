@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
 @SuppressWarnings("rawtypes")
 public abstract class AbstractInventoryProperty<K, V> implements InventoryProperty<K, V> {
 
+    @SuppressWarnings("rawtypes")
     private static Map<Class<? extends AbstractInventoryProperty>, String> defaultKeys = new HashMap<>();
 
     /**
