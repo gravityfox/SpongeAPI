@@ -32,6 +32,7 @@ import org.spongepowered.api.item.inventory.query.QueryOperation;
 import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.util.ResettableBuilder;
 
 import java.util.Collection;
@@ -462,6 +463,25 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
         QueryOperation[] operations = new QueryOperation[props.length];
         for (int i = 0; i < props.length; i++) {
             operations[i] = QueryOperationTypes.INVENTORY_PROPERTY.of(props[i]);
+        }
+        return query(operations);
+    }
+
+    /**
+     * Query this inventory for inventories matching any of the supplied titles.
+     * Logical <code>OR</code> is applied between operands.
+     *
+     * @param names the names of the inventories to search for
+     * @param <T> expected inventory type, specified as generic to allow easy
+     *      pseudo-duck-typing
+     * @return the query result
+     * @deprecated use {@link #query(QueryOperation...) instead}
+     */
+    @Deprecated
+    default <T extends Inventory> T query(Translation... names) {
+        QueryOperation[] operations = new QueryOperation[names.length];
+        for (int i = 0; i < names.length; i++) {
+            operations[i] = QueryOperationTypes.INVENTORY_TITLE.of(names[i]);
         }
         return query(operations);
     }
