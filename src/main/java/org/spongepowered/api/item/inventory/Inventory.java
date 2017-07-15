@@ -29,6 +29,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.query.QueryOperation;
+import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.util.ResettableBuilder;
@@ -375,6 +376,119 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
      *      supplied criteria
      */
     <T extends InventoryProperty<?, ?>> Optional<T> getProperty(Class<T> property, Object key);
+
+    /**
+     * Query this inventory for inventories matching any of the supplied types.
+     * This is effectively an <code>instanceof</code> check against each child
+     * inventory. Logical <code>OR</code> is applied between operands.
+     *
+     * @param types inventory types (interfaces or classes) to query for
+     * @param <T> expected inventory type, specified as generic to allow easy
+     *      pseudo-duck-typing
+     * @return the query result
+     * @deprecated use {@link #query(QueryOperation...)} instead
+     */
+    @Deprecated
+    default <T extends Inventory> T query(Class<?>... types) {
+        QueryOperation[] operations = new QueryOperation[types.length];
+        for (int i = 0; i < types.length; i++) {
+            operations[i] = QueryOperationTypes.INVENTORY_TYPE.of(types[i].asSubclass(Inventory.class));
+        }
+        return query(operations);
+    }
+
+    /**
+     * Query this inventory for inventories containing any of the supplied item
+     * types. This query operates directly on {@link Slot} leaf nodes in the
+     * inventory and will always return a collection containing only
+     * {@link Slot} instances. Logical <code>OR</code> is applied between
+     * operands.
+     *
+     * @param types item types to query for
+     * @param <T> expected inventory type, specified as generic to allow easy
+     *      pseudo-duck-typing
+     * @return the query result
+     * @deprecated use {@link #query(QueryOperation...)} instead
+     */
+    @Deprecated
+    default <T extends Inventory> T query(ItemType... types) {
+        QueryOperation[] operations = new QueryOperation[types.length];
+        for (int i = 0; i < types.length; i++) {
+            operations[i] = QueryOperationTypes.ITEM_TYPE.of(types[i]);
+        }
+        return query(operations);
+    }
+
+    /**
+     * Query this inventory for inventories containing stacks which match the
+     * supplied stack operand. This query operates directly on {@link Slot}
+     * leaf nodes in the inventory and will always return a collection
+     * containing only {@link Slot} instances.
+     * To query for stacks of any size use {@link #queryAny(ItemStack...)}.
+     *
+     * @param types items to query for, stack sizes must match the supplied
+     *     stack exactly
+     * @param <T> expected inventory type, specified as generic to allow easy
+     *     pseudo-duck-typing
+     * @return the query result
+     * @deprecated use {@link #query(QueryOperation...)} instead
+     */
+    @Deprecated
+    default <T extends Inventory> T query(ItemStack... types) {
+        QueryOperation[] operations = new QueryOperation[types.length];
+        for (int i = 0; i < types.length; i++) {
+            operations[i] = QueryOperationTypes.ITEM_STACK_EXACT.of(types[i]);
+        }
+        return query(operations);
+    }
+
+    /**
+     * Query this inventory for inventories which match any of the supplied
+     * properties. The <code>equals</code> method of each property is called on
+     * each child inventory which has the supplied property. Logical
+     * <code>OR</code> is applied between operands. This method is effectively
+     * the same as calling {@link #query} with an
+     * {@link org.spongepowered.api.data.Property.Operator} of
+     * {@link org.spongepowered.api.data.Property.Operator#EQUAL}.
+     *
+     * @param props inventory properties to query for
+     * @param <T> expected inventory type, specified as generic to allow easy
+     *      pseudo-duck-typing
+     * @return the query result
+     * @deprecated use {@link #query(QueryOperation...)} instead
+     */
+    @Deprecated
+    default <T extends Inventory> T query(InventoryProperty<?, ?>... props) {
+        QueryOperation[] operations = new QueryOperation[props.length];
+        for (int i = 0; i < props.length; i++) {
+            operations[i] = QueryOperationTypes.INVENTORY_PROPERTY.of(props[i]);
+        }
+        return query(operations);
+    }
+
+    /**
+     * Query this inventory for inventories containing any stacks which match
+     * the supplied stack operands ignoring its quantity. This query operates
+     * directly on {@link Slot} leaf nodes in the inventory and will always
+     * return a collection containing only {@link Slot} instances. Logical
+     * <code>OR</code> is applied between operands.
+     * This ignores stack sizes. To query for stacks of a specific size use
+     * {@link #query(ItemStack...)}.
+     *
+     * @param types items to query for, the size of the stacks is always ignored
+     * @param <T> expected inventory type, specified as generic to allow easy
+     *      pseudo-duck-typing
+     * @return the query result
+     * @deprecated use {@link #query(QueryOperation...)} instead
+     */
+    @Deprecated
+    default <T extends Inventory> T queryAny(ItemStack... types) {
+        QueryOperation[] operations = new QueryOperation[types.length];
+        for (int i = 0; i < types.length; i++) {
+            operations[i] = QueryOperationTypes.ITEM_STACK_IGNORE_QUANTITY.of(types[i]);
+        }
+        return query(operations);
+    }
 
     /**
      * Query this inventory for inventories matching any of the supplied

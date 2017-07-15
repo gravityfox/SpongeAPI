@@ -24,5 +24,10 @@
  */
 package org.spongepowered.api.item.inventory.query;
 
+/**
+ * Represents an operation that is part of a query. The details of the
+ * filtering are implementation-specific and are not exposed in this
+ * interface.
+ */
 public interface QueryOperation {
 }
