@@ -47,8 +47,8 @@ public final class QueryOperationTypes {
 
     public static final QueryOperationType<ItemStack> ITEM_STACK_EXACT = DummyObjectProvider.createFor(QueryOperationType.class, "ITEM_STACK_EXACT");
 
-    public static final QueryOperationType<ItemStack> ITEM_STACK_IGNORE_COUNT = DummyObjectProvider.createFor(QueryOperationType.class,
-            "ITEM_STACK_IGNORE_COUNT");
+    public static final QueryOperationType<ItemStack> ITEM_STACK_IGNORE_QUANTITY = DummyObjectProvider.createFor(QueryOperationType.class,
+            "ITEM_STACK_IGNORE_QUANTITY");
 
     public static final QueryOperationType<ItemType> ITEM_TYPE = DummyObjectProvider.createFor(QueryOperationType.class, "ITEM_TYPE");
 
