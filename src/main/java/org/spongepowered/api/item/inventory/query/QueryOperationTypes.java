@@ -28,7 +28,6 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.InventoryProperty;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
 import java.util.function.Predicate;
@@ -39,8 +38,6 @@ public final class QueryOperationTypes {
 
     public static final QueryOperationType<InventoryProperty<?, ?>> INVENTORY_PROPERTY = DummyObjectProvider.createFor(QueryOperationType.class,
             "INVENTORY_PROPERTY");
-
-    public static final QueryOperationType<Translation> INVENTORY_TITLE = DummyObjectProvider.createFor(QueryOperationType.class, "INVENTORY_TITLE");
 
     public static final QueryOperationType<Class<? extends Inventory>> INVENTORY_TYPE = DummyObjectProvider.createFor(QueryOperationType.class,
             "INVENTORY_TYPE");
