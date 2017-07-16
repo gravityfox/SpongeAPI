@@ -481,7 +481,7 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
     default <T extends Inventory> T query(Translation... names) {
         QueryOperation[] operations = new QueryOperation[names.length];
         for (int i = 0; i < names.length; i++) {
-            operations[i] = QueryOperationTypes.INVENTORY_TITLE.of(names[i]);
+            operations[i] = QueryOperationTypes.INVENTORY_TRANSLATION.of(names[i]);
         }
         return query(operations);
     }
