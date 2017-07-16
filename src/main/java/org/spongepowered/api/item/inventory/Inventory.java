@@ -26,15 +26,12 @@ package org.spongepowered.api.item.inventory;
 
 import org.spongepowered.api.Nameable;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.Property;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.query.QueryOperation;
 import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.util.ResettableBuilder;
 
@@ -484,7 +481,7 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
     default <T extends Inventory> T query(Translation... names) {
         QueryOperation[] operations = new QueryOperation[names.length];
         for (int i = 0; i < names.length; i++) {
-            operations[i] = QueryOperationTypes.INVENTORY_PROPERTY.of(new InventoryTitle(Text.of(names[i]), Property.Operator.EQUAL));
+            operations[i] = QueryOperationTypes.INVENTORY_TITLE.of(names[i]);
         }
         return query(operations);
     }

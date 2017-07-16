@@ -45,17 +45,6 @@ public class InventoryTitle extends AbstractInventoryProperty<String, Text> {
         super(value);
     }
 
-    /**
-     * Creates a new {@link InventoryTitle} to be displayed on an {@link Inventory}.
-     *
-     * @param value The text value to display
-     * @param operator logical operator to use when comparing this property with
-     *      other properties
-     */
-    public InventoryTitle(Text value, Operator operator) {
-        super(value, operator);
-    }
-
     @Override
     public int compareTo(Property<?, ?> other) {
         if (other == null) {
