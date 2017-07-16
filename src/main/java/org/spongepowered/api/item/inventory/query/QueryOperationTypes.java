@@ -40,7 +40,8 @@ public final class QueryOperationTypes {
     public static final QueryOperationType<InventoryProperty<?, ?>> INVENTORY_PROPERTY = DummyObjectProvider.createFor(QueryOperationType.class,
             "INVENTORY_PROPERTY");
 
-    public static final QueryOperationType<Translation> INVENTORY_TITLE = DummyObjectProvider.createFor(QueryOperationType.class, "INVENTORY_TITLE");
+    public static final QueryOperationType<Translation> INVENTORY_TRANSLATION = DummyObjectProvider.createFor(QueryOperationType.class,
+            "INVENTORY_TRANSLATION");
 
     public static final QueryOperationType<Class<? extends Inventory>> INVENTORY_TYPE = DummyObjectProvider.createFor(QueryOperationType.class,
             "INVENTORY_TYPE");
