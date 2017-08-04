@@ -487,6 +487,37 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
     }
 
     /**
+     * Query this inventory for inventories matching any of the supplied titles.
+     * Logical <code>OR</code> is applied between operands.
+     *
+     * @param args search parameters
+     * @param <T> expected inventory type, specified as generic to allow easy
+     *      pseudo-duck-typing
+     * @return the query result
+     * @deprecated use {@link #query(QueryOperation...) instead}
+     */
+    @Deprecated
+    default <T extends Inventory> T query(Object... args) {
+        QueryOperation[] operations = new QueryOperation[args.length];
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof InventoryProperty) {
+                operations[i] = QueryOperationTypes.INVENTORY_PROPERTY.of((InventoryProperty<?, ?>) args[i]);
+            } else if (args[i] instanceof Translation) {
+                operations[i] = QueryOperationTypes.INVENTORY_TRANSLATION.of((Translation) args[i]);
+            } else if (args[i] instanceof Class && Inventory.class.isAssignableFrom((Class<?>) args[i])) {
+                operations[i] = QueryOperationTypes.INVENTORY_TYPE.of(((Class<?>) args[i]).asSubclass(Inventory.class));
+            } else if (args[i] instanceof ItemStack) {
+                operations[i] = QueryOperationTypes.ITEM_STACK_IGNORE_QUANTITY.of((ItemStack) args[i]);
+            } else if (args[i] instanceof ItemType) {
+                operations[i] = QueryOperationTypes.ITEM_TYPE.of((ItemType) args[i]);
+            } else {
+                throw new IllegalArgumentException("Unsupported argument " + args[i]);
+            }
+        }
+        return query(operations);
+    }
+
+    /**
      * Query this inventory for inventories containing any stacks which match
      * the supplied stack operands ignoring its quantity. This query operates
      * directly on {@link Slot} leaf nodes in the inventory and will always
