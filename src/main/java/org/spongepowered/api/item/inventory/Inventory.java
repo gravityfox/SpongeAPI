@@ -35,7 +35,9 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.util.ResettableBuilder;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.function.Consumer;
@@ -487,8 +489,16 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
     }
 
     /**
-     * Query this inventory for inventories matching any of the supplied titles.
-     * Logical <code>OR</code> is applied between operands.
+     * <p>Query this inventory by dynamically inspecting each operand. Each
+     * operand in turn is checked for a match against the other query methods,
+     * and if a matching method is found the query is performed using the
+     * operand. This is repeated until all operands are consumed and allows a
+     * union of multiple query types to be aggregated into a single view.</p>
+     *
+     * <p>For operands with no matching type, the behaviour is determined by the
+     * individual inventory. A naive match may be obtained by calling .equals()
+     * against the child inventory passing the unknown operand as an argument.
+     * </p>
      *
      * @param args search parameters
      * @param <T> expected inventory type, specified as generic to allow easy
@@ -498,23 +508,24 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
      */
     @Deprecated
     default <T extends Inventory> T query(Object... args) {
-        QueryOperation[] operations = new QueryOperation[args.length];
-        for (int i = 0; i < args.length; i++) {
-            if (args[i] instanceof InventoryProperty) {
-                operations[i] = QueryOperationTypes.INVENTORY_PROPERTY.of((InventoryProperty<?, ?>) args[i]);
-            } else if (args[i] instanceof Translation) {
-                operations[i] = QueryOperationTypes.INVENTORY_TRANSLATION.of((Translation) args[i]);
-            } else if (args[i] instanceof Class && Inventory.class.isAssignableFrom((Class<?>) args[i])) {
-                operations[i] = QueryOperationTypes.INVENTORY_TYPE.of(((Class<?>) args[i]).asSubclass(Inventory.class));
-            } else if (args[i] instanceof ItemStack) {
-                operations[i] = QueryOperationTypes.ITEM_STACK_IGNORE_QUANTITY.of((ItemStack) args[i]);
-            } else if (args[i] instanceof ItemType) {
-                operations[i] = QueryOperationTypes.ITEM_TYPE.of((ItemType) args[i]);
-            } else {
-                throw new IllegalArgumentException("Unsupported argument " + args[i]);
+        List<QueryOperation> operations = new ArrayList<>(args.length);
+        for (Object arg : args) {
+            if (arg instanceof InventoryProperty) {
+                operations.add(QueryOperationTypes.INVENTORY_PROPERTY.of((InventoryProperty<?, ?>) arg));
+            } else if (arg instanceof Translation) {
+                operations.add(QueryOperationTypes.INVENTORY_TRANSLATION.of((Translation) arg));
+            } else if (arg instanceof Class && Inventory.class.isAssignableFrom((Class<?>) arg)) {
+                operations.add(QueryOperationTypes.INVENTORY_TYPE.of(((Class<?>) arg).asSubclass(Inventory.class)));
+            } else if (arg instanceof ItemStack) {
+                operations.add(QueryOperationTypes.ITEM_STACK_IGNORE_QUANTITY.of((ItemStack) arg));
+            } else if (arg instanceof ItemType) {
+                operations.add(QueryOperationTypes.ITEM_TYPE.of((ItemType) arg));
             }
+            // Other objects never really worked anyways. Strings failed all
+            // tests, and because the lens should never be exposed, I don't
+            // think the generic test "arg.equals(lens)" was ever made use of.
         }
-        return query(operations);
+        return query(operations.toArray(new QueryOperation[operations.size()]));
     }
 
     /**
